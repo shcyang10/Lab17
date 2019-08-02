@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,9 +14,9 @@ import java.util.ArrayList;
 
 public class CountriesTextFile {
 	
-	public static ArrayList<Country> readFromFile() {
-		ArrayList<Country> listCountries = new ArrayList<>();
-		Path path = Paths.get("country_list", filename);
+	public static void readFromFile() {
+		String fileName = "countries.txt";
+		Path path = Paths.get("country_list", fileName);
 		
 		File file = path.toFile();
 		
@@ -27,13 +26,7 @@ public class CountriesTextFile {
 			String line = br.readLine();
 
 			while (line != null) {
-				// 1.
-				String[] countryVaule = line.split(",");
-				// 2.
-				Country c = new Country (countryVaule[0], countryVaule[1], countryVaule[2],
-						Integer.parseInt(countryVaule[3]));
-				// 3.
-				countries.add(c);
+				System.out.println(line);
 				line = br.readLine();
 			}
 			br.close();
@@ -43,67 +36,44 @@ public class CountriesTextFile {
 		} catch (IOException e) {
 			System.out.println("Something happened when attempting to read from the file...");
 		}
-		return countries;
 	}
-	public static void writeToFile(ArrayList<Country> countries) {
+	public static void writeToFile(ArrayList<Country> Countries) {
+
 		String fileName = "countries.txt";
 
-		Path path = Paths.get("countries_list", fileName);
+		Path path = Paths.get(fileName);
 
 		File file = path.toFile();
-		PrintWriter output = null;
-
+		
+		if (file == null) {
+		file = new File("countries.txt");
+		  
+		
 		try {
-			
-			output = new PrintWriter(new FileOutputStream(file, false));
-			for (Country c : countries) {
-				output.println(c);
+			if (file.createNewFile())
+			{
+			    System.out.println("File is created!");
+			} else {
+			    System.out.println("File already exists.");
 			}
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		}
+		PrintWriter output = null;
+		try {
+
+			output = new PrintWriter(new FileOutputStream(file, true)); 
+			for (Country c : Countries) {
+				output.println(c.toString());
+			}
+
 		} catch (FileNotFoundException e) {
-			System.out.println("Hey, check again!");
+			System.out.println("Hey, contact customer service!");
+
 		} finally {
 			output.close();
 		}
-
 	}
-	public static void createOurFile() {
-		String fileName = "countries.txt";
-
-		Path path = Paths.get("countries_list", fileName); 
-		if (Files.notExists(path)) {
-
-			try {
-				Files.createFile(path);
-				System.out.println("The file was created successfully!");
-			} catch (IOException e) {
-
-				System.out.println("Oops, something went terribly wrong!");
-			}
-		} else {
-			System.out.println("The file already exists!");
-		}
-	}	
-	public static void createDir() {
-
-		String dirPath = "countries_list";
-
-		Path folder = Paths.get(dirPath);
-
-		if (Files.notExists(folder)) {
-
-			try {
-				Files.createDirectories(folder);
-				System.out.println("The file was created successfully");
-
-			} catch (IOException e) {
-
-				System.out.println("Something went wrong with the folder creation");
-			}
-
-		} else {
-			System.out.println("The folder already exists!");
-		}
-	}
-
-
-}
+}	
